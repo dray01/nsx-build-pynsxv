@@ -17,10 +17,6 @@ from pynsxv.library.nsx_esg import *
 from pynsxv.library.nsx_dfw import *
 from pynsxv.library.nsx_lb import *
 from pynsxv.library.libutils import *
-#from pyVim.connect import SmartConnect
-#from pyVmomi import vim
-#from pyVim import connect
-
 
 nsxraml_file = '/usr/local/lib/python2.7/dist-packages/pynsxv/library/api_spec/nsxvapi.raml'
 
