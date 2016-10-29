@@ -158,7 +158,7 @@ esg_fw_default_set(client_session, esg_name, "accept", logging_enabled=None)
 
 dlr_name = "py-dlr01"
 edgeId, null = dlr_read(client_session, dlr_name)
-print "Adding OSPF Configuration to the %s Distributed logical router. Note, we had to use xml here as pynsxv is yet to support bgp or ospf config"%(dlr_name)
+print "Adding OSPF Configuration to the %s Distributed logical router."%(dlr_name)
 
 #initialize variables with needed info for input file and to make NSX REST API call
 #nsx_username = "admin"
