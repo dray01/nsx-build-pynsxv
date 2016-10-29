@@ -18,11 +18,8 @@ from pynsxv.library.nsx_esg import *
 from pynsxv.library.nsx_dfw import *
 from pynsxv.library.nsx_lb import *
 from pynsxv.library.libutils import *
-#from pyVim.connect import SmartConnect
-#from pyVmomi import vim
-#from pyVim import connect
 
-#ignore specific warnings
+#ignore cert warnings from NSX when making direct api calls
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -46,7 +43,6 @@ edge_cluster = config.get('defaults', 'edge_cluster')
 #print nsx_username
 #print datacenter_name
 #print vcenter_user
-
 
 # Collect vCenter MoID https://<vcenterIP>/mob
 vccontent = connect_to_vc(vcenter, vcenter_user, vcenter_passwd)
@@ -158,7 +154,7 @@ esg_fw_default_set(client_session, esg_name, "accept", logging_enabled=None)
 
 dlr_name = "py-dlr01"
 edgeId, null = dlr_read(client_session, dlr_name)
-print "Adding OSPF Configuration to the %s Distributed logical router."%(dlr_name)
+print "Adding OSPF Configuration to the %s Distributed logical router"%(dlr_name)
 
 #initialize variables with needed info for input file and to make NSX REST API call
 #nsx_username = "admin"
@@ -337,8 +333,8 @@ print "Added default gateway for %s. He needs to know who his next hop is."%(esg
 #next_hop = "172.16.2.2"
 #esg_route_add(client_session, esg_name, subnet, next_hop, "1")
 #print "Adding static route from %s to %s as BGP is not supported in pynsxv as of yet :("%(esg_name, dlr_name)
-#print "Phew, now that that is done, let's check out what we built"
-#time.sleep(8)
+print "Phew, now that that is done, let's check out what we built"
+time.sleep(8)
 
 # Execute some pynsxv commands to show the outputs of the build
 
