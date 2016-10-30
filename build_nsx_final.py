@@ -150,6 +150,34 @@ print "Almost done... Thanks for being patient. Just connected the %s interface 
 # ESG Accept Rule
 esg_fw_default_set(client_session, esg_name, "accept", logging_enabled=None)
 
+# Configure LB
+
+lb_app_profile = "py-ap-http1"
+lb_proto = "HTTP"
+lb_pool_name = "py-pool-web"
+lb_monitor = "default_tcp_monitor"
+lb_vip_name = "py-vip-web"
+lb_vip_ip = "192.168.119.201"
+lb_vip_port = "80"
+esg_name = 'py-esg01'
+
+## Enable LB Config
+load_balancer(client_session, esg_name, enabled=True)
+
+## Enable LB app profile
+add_app_profile(client_session, esg_name, lb_app_profile, lb_proto)
+
+## Create web Pool.
+add_pool(client_session, esg_name, lb_pool_name, monitor=lb_monitor)
+add_member(client_session, esg_name, lb_pool_name, "web01", "10.10.1.11", port="80")
+add_member(client_session, esg_name, lb_pool_name, "web02", "10.10.1.12", port="80")
+
+## Create the LB Web VIP and configure secondary EDG interface
+esg_cfg_interface(client_session, esg_name, "0", "192.168.119.200", "255.255.255.0", secondary_ips=lb_vip_ip)
+add_vip(client_session, esg_name, lb_vip_name, lb_app_profile, lb_vip_ip, lb_proto, lb_vip_port, lb_pool_name)
+
+print "Configured Load Balancer vip %s, pool %s including 2 web svrs, profile %s on ESG %s "%(lb_vip_name, lb_pool_name, lb_app_profile, esg_name)
+
 #Add CUstomer things as pynsxv does nto support ospf
 
 dlr_name = "py-dlr01"
@@ -340,12 +368,12 @@ time.sleep(8)
 
 p = subprocess.Popen(["pynsxv", "lswitch", "list"], stdout=subprocess.PIPE)
 (output, err) = p.communicate()
-print "*** List all Logical Switches***\n", output
+print "*** List all Logical Switches ***\n", output
 
 time.sleep(4)
 p = subprocess.Popen(["pynsxv", "dlr", "list"], stdout=subprocess.PIPE)
 (output, err) = p.communicate()
-print "*** List all Distributed Logical Routers***\n", output
+print "*** List all Distributed Logical Routers ***\n", output
 
 time.sleep(4)
 p = subprocess.Popen(["pynsxv", "dlr", "list_interfaces", "-n" "py-dlr01"], stdout=subprocess.PIPE)
@@ -362,7 +390,7 @@ p = subprocess.Popen(["pynsxv", "esg", "list_interfaces", "-n" "py-esg01"], stdo
 (output, err) = p.communicate()
 print "*** List Our ESG's interfaces ***\n", output
 
-#time.sleep(4)
-#p = subprocess.Popen(["pynsxv", "esg", "list_routes", "-n" "py-esg01"], stdout=subprocess.PIPE)
-#(output, err) = p.communicate()
-#print "*** List Our ESG's statis routes ***\n", output
+time.sleep(4)
+p = subprocess.Popen(["pynsxv", "lb", "list_vips", "-n" "py-esg01"], stdout=subprocess.PIPE)
+(output, err) = p.communicate()
+print "*** List Our Load Balancer VIP ***\n", output
