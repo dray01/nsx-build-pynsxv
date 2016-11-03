@@ -71,7 +71,7 @@ print "Created logical switches %s, %s, %s and %s"%(new_ls_name1, new_ls_name2, 
 dlr_name = 'py-dlr01'
 dlr_pwd = 'VMware1!VMware1!'
 dlr_size = 'Compact'
-ha_ls_name = 'vds-mgt_VM Network'
+ha_ls_name = 'Internal'
 uplink_ls_name = new_tp_ls_name
 uplink_ip = '172.16.2.2'
 uplink_subnet = '255.255.255.248'
@@ -118,7 +118,7 @@ esg_name = 'py-esg01'
 esg_un = 'admin'
 esg_pwd = 'VMware1!VMware1!'
 esg_size = 'Compact'
-default_pg = 'vds-mgt_VM Network'
+default_pg = 'Internal'
 uplink_ls_name = new_tp_ls_name
 esg_remote_access = "True"
 
@@ -132,7 +132,7 @@ esg_create(client_session, esg_name, esg_pwd, esg_size, datacentermoid, datastor
 
 # Configure ESG Uplink interface
 ifindex = "0"
-ipaddr = "192.168.119.200"
+ipaddr = "192.168.119.150"
 netmask = "255.255.255.0"
 vnic_type = "uplink"
 esg_cfg_interface(client_session, esg_name, ifindex, ipaddr, netmask, vnic_type=vnic_type)
@@ -157,7 +157,7 @@ lb_proto = "HTTP"
 lb_pool_name = "py-pool-web"
 lb_monitor = "default_tcp_monitor"
 lb_vip_name = "py-vip-web"
-lb_vip_ip = "192.168.119.201"
+lb_vip_ip = "192.168.119.151"
 lb_vip_port = "80"
 esg_name = 'py-esg01'
 
@@ -173,7 +173,7 @@ add_member(client_session, esg_name, lb_pool_name, "web01", "10.10.1.11", port="
 add_member(client_session, esg_name, lb_pool_name, "web02", "10.10.1.12", port="80")
 
 ## Create the LB Web VIP and configure secondary EDG interface
-esg_cfg_interface(client_session, esg_name, "0", "192.168.119.200", "255.255.255.0", secondary_ips=lb_vip_ip)
+esg_cfg_interface(client_session, esg_name, "0", "192.168.119.150", "255.255.255.0", secondary_ips=lb_vip_ip)
 add_vip(client_session, esg_name, lb_vip_name, lb_app_profile, lb_vip_ip, lb_proto, lb_vip_port, lb_pool_name)
 
 print "Configured Load Balancer vip %s, pool %s including 2 web svrs, profile %s on ESG %s "%(lb_vip_name, lb_pool_name, lb_app_profile, esg_name)
@@ -187,7 +187,7 @@ print "Adding OSPF Configuration to the %s Distributed logical router"%(dlr_name
 #initialize variables with needed info for input file and to make NSX REST API call
 #nsx_username = "admin"
 #nsx_password = "VMware1!"
-nsx_url = "https://192.168.110.15/api/4.0/edges/{}/routing/config".format( edgeId )
+nsx_url = "https://192.168.119.201/api/4.0/edges/{}/routing/config".format( edgeId )
 myheaders={'content-type':'application/xml'}
 
 #create XML payload with ospf information for DLR
@@ -275,7 +275,7 @@ print "Adding OSPF Configuration to the %s Edge Services Gateway. Note, we had t
 #initialize variables with needed info for input file and to make NSX REST API call
 #nsx_username = "admin"
 #nsx_password = "VMware1!"
-nsx_url = "https://192.168.110.15/api/4.0/edges/{}/routing/config".format( edgeId )
+nsx_url = "https://192.168.119.201/api/4.0/edges/{}/routing/config".format( edgeId )
 myheaders={'content-type':'application/xml'}
 
 #create XML payload with ospf information for DLR
@@ -284,7 +284,7 @@ payload ='''
 <routing>
     <enabled>true</enabled>
     <routingGlobalConfig>
-      <routerId>192.168.119.200</routerId>
+      <routerId>192.168.119.150</routerId>
       <ecmp>false</ecmp>
       <logging>
         <enable>true</enable>
